@@ -58,3 +58,18 @@ Frontend (Vercel) ──HTTP/REST──> Backend (Render) ──MONGODB_URI─�
 
 En desarrollo local, el backend apunta a la instancia iniciada por este `compose.yaml`.
 
+## Alcance y límites verificados
+
+- compose.yaml levanta MongoDB 8.0 para desarrollo, anuncia el replica set local rs0, publica el puerto 27017, conserva archivos en el volumen mongo-data e inicializa el replica set mediante el servicio mongo-init.
+- Esta composición local no configura usuario/contraseña de MongoDB. Úsala solo en un equipo de desarrollo confiable; no expongas ese puerto directamente a Internet.
+- El repositorio no incluye un volcado ni datos iniciales de jugadores. Las colecciones y documentos de la aplicación se crean y actualizan cuando el backend ejecuta sus operaciones.
+- Atlas es independiente de GitHub y Docker Compose: se crea/configura desde MongoDB Atlas y el backend accede mediante MONGODB_URI.
+
+## Comprobaciones cuando el backend no conecta
+
+1. En local, confirma que docker compose ps -a muestre MongoDB saludable y que mongo-init haya terminado correctamente.
+2. Confirma que el backend local use mongodb://localhost:27017/simulador?replicaSet=rs0.
+3. En Render, la URI debe ser la de Atlas, con el nombre de base de datos y la contraseña correcta (codifica caracteres reservados de URL). No uses localhost: allí significaría el propio contenedor de Render.
+4. Comprueba que Atlas tenga un usuario de base de datos y una regla IP que permita conexiones desde Render; revisa los logs del backend sin publicar la URI.
+
+El volumen mongo-data mantiene los datos locales tras docker compose down; docker compose down -v elimina ese volumen y sus datos.
