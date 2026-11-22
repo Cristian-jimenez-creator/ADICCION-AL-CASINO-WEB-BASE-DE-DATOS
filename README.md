@@ -1,15 +1,19 @@
 # Base de datos
 
-MongoDB se ejecuta como servicio independiente del backend y del frontend. El archivo `compose.yaml` inicia MongoDB 8 como replica set local, necesario para las transacciones que actualizan los saldos.
+Este repositorio contiene la configuración para ejecutar MongoDB localmente. No contiene una copia de la base de datos de producción ni datos que deban cargarse en Atlas: Atlas administra esos datos como servicio. El backend y el frontend se mantienen en repositorios separados.
 
-Desde la raíz del proyecto:
+## MongoDB local con Docker
+
+Desde la raíz de este repositorio:
 
 ```powershell
-docker compose -f database/compose.yaml up -d
-docker compose -f database/compose.yaml ps -a
-docker compose -f database/compose.yaml logs mongo-init
+docker compose up -d
+docker compose ps -a
+docker compose logs mongo-init
 ```
 
-Espera a que `mongo-init` termine con código cero antes de iniciar el backend. La réplica anuncia `localhost:27017`, por lo que esta configuración está destinada al backend ejecutado en el mismo equipo. El backend usa `mongodb://localhost:27017/simulador?replicaSet=rs0` por defecto.
+Espera a que `mongo-init` termine con código cero antes de iniciar el backend. La réplica local anuncia `localhost:27017`; el backend usa por defecto `mongodb://localhost:27017/simulador?replicaSet=rs0`. El volumen `mongo-data` conserva los datos entre reinicios.
 
-El volumen `mongo-data` conserva los datos entre reinicios. Para producción configura `MONGODB_URI` con una instancia remota que soporte replica sets y transacciones; no reutilices la configuración local sin revisar red, autenticación y secretos.
+## Producción con MongoDB Atlas
+
+No subas archivos de base de datos a GitHub. Para conectar el backend desplegado, guarda la cadena de conexión de Atlas en Render como variable secreta `MONGODB_URI`, con usuario, contraseña y nombre de base de datos. En Atlas, permite las conexiones de red del servicio de backend. Nunca publiques la cadena ni la contraseña en este repositorio.
