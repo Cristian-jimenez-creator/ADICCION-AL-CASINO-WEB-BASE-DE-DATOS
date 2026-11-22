@@ -12,6 +12,8 @@ El backend es el único componente que se conecta a MongoDB. El frontend se comu
 - Volumen Docker `mongo-data` para conservar los datos locales entre reinicios.
 - `compose.yaml`: inicia MongoDB, espera su estado saludable e inicializa el replica set.
 
+Este repositorio mantiene una configuración de ejecución, no un dump, colecciones exportadas ni un archivo de esquema de producción. Los documentos de cuentas y partidas se escriben desde el backend cuando se usa la aplicación.
+
 No se mantiene un esquema SQL ni un conjunto de documentos de producción dentro de Git. El backend usa Spring Data MongoDB y crea/consulta los datos de la aplicación al ejecutarse.
 
 ## Iniciar MongoDB local
@@ -55,3 +57,4 @@ Frontend (Vercel) ──HTTP/REST──> Backend (Render) ──MONGODB_URI─�
 ```
 
 En desarrollo local, el backend apunta a la instancia iniciada por este `compose.yaml`.
+
